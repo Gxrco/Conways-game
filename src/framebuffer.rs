@@ -1,13 +1,12 @@
-use crate::line_impl::Line;
 use crate::color::Color;
 use crate::bmp;
 
 pub struct Framebuffer {
-    width: u32,
-    height: u32,
-    buffer: Vec<Color>,
-    background_color: Color,
-    current_color: Color,
+    pub width: u32,
+    pub height: u32,
+    pub buffer: Vec<Color>,
+    pub background_color: Color,
+    pub current_color: Color,
 }
 
 impl Framebuffer {
@@ -43,7 +42,13 @@ impl Framebuffer {
         }
     }
 
-    pub fn render_buffer(&self, file_path: &str) -> std::io::Result<()> {
+    pub fn render(&self, file_path: &str) -> std::io::Result<()> {
         bmp::write_bmp_file(file_path, &self.buffer, self.width, self.height)
+    }
+
+    pub fn get_u32_buffer(&self) -> Vec<u32> {
+        self.buffer.iter().map(|color| {
+            ((color.r as u32) << 16) | ((color.g as u32) << 8) | (color.b as u32)
+        }).collect()
     }
 }
